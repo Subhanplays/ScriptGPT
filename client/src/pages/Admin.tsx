@@ -29,34 +29,34 @@ export default function Admin() {
     setLoading(true);
     try {
       switch (t) {
-        case 'dashboard': setDashboard(await api.get<DashboardStats>('/admin/dashboard')); break;
-        case 'users': setUsers(await api.get<AdminUser[]>('/admin/users')); break;
-        case 'conversations': setConversations(await api.get<Conversation[]>('/admin/conversations')); break;
-        case 'usage': setUsageLogs(await api.get<any[]>('/admin/usage')); break;
-        case 'settings': { const s = await api.get<Record<string, string>>('/admin/settings'); const l = await api.get<any[]>('/admin/limits'); setSettings(s); setLimits(l); break; }
-        case 'logs': setLogs(await api.get<SystemLog[]>('/admin/logs')); break;
+        case 'dashboard': setDashboard(await api.get<DashboardStats>('/admin?sub=dashboard')); break;
+        case 'users': setUsers(await api.get<AdminUser[]>('/admin?sub=users')); break;
+        case 'conversations': setConversations(await api.get<Conversation[]>('/admin?sub=conversations')); break;
+        case 'usage': setUsageLogs(await api.get<any[]>('/admin?sub=usage')); break;
+        case 'settings': { const s = await api.get<Record<string, string>>('/admin?sub=settings'); const l = await api.get<any[]>('/admin?sub=limits'); setSettings(s); setLimits(l); break; }
+        case 'logs': setLogs(await api.get<SystemLog[]>('/admin?sub=logs')); break;
       }
     } catch { toast.error('Failed to load data'); } finally { setLoading(false); }
   };
 
   const handleRoleChange = async (userId: string, role: string) => {
-    try { await api.put(`/admin/users/${userId}/role`, { role }); setUsers((p) => p.map((u) => u.id === userId ? { ...u, role } : u)); toast.success('Role updated'); } catch { toast.error('Failed'); }
+    try { await api.put(`/admin?id=${userId}&sub=role`, { role }); setUsers((p) => p.map((u) => u.id === userId ? { ...u, role } : u)); toast.success('Role updated'); } catch { toast.error('Failed'); }
   };
   const handleLimitsChange = async (userId: string, daily: number, monthly: number) => {
-    try { await api.put(`/admin/users/${userId}/limits`, { dailyLimit: daily, monthlyLimit: monthly }); setUsers((p) => p.map((u) => u.id === userId ? { ...u, dailyLimit: daily, monthlyLimit: monthly } : u)); toast.success('Limits updated'); } catch { toast.error('Failed'); }
+    try { await api.put(`/admin?id=${userId}&sub=limits`, { dailyLimit: daily, monthlyLimit: monthly }); setUsers((p) => p.map((u) => u.id === userId ? { ...u, dailyLimit: daily, monthlyLimit: monthly } : u)); toast.success('Limits updated'); } catch { toast.error('Failed'); }
   };
   const handleDeleteUser = async (userId: string) => {
     if (!confirm('Are you sure?')) return;
-    try { await api.delete(`/admin/users/${userId}`); setUsers((p) => p.filter((u) => u.id !== userId)); toast.success('Deleted'); } catch { toast.error('Failed'); }
+    try { await api.delete(`/admin?id=${userId}`); setUsers((p) => p.filter((u) => u.id !== userId)); toast.success('Deleted'); } catch { toast.error('Failed'); }
   };
   const handleCreateUser = async () => {
-    try { await api.post('/admin/create-user', newUser); setShowCreateUser(false); setNewUser({ email: '', username: '', password: '', role: 'USER', dailyLimit: 50, monthlyLimit: 1000 }); loadTab('users'); toast.success('Created'); } catch (e: any) { toast.error(e.message || 'Failed'); }
+    try { await api.post('/admin?sub=create-user', newUser); setShowCreateUser(false); setNewUser({ email: '', username: '', password: '', role: 'USER', dailyLimit: 50, monthlyLimit: 1000 }); loadTab('users'); toast.success('Created'); } catch (e: any) { toast.error(e.message || 'Failed'); }
   };
   const handleSaveSettings = async () => {
-    try { await api.put('/admin/settings', settings); toast.success('Saved'); } catch { toast.error('Failed'); }
+    try { await api.put('/admin?sub=settings', settings); toast.success('Saved'); } catch { toast.error('Failed'); }
   };
   const handleSaveLimits = async (role: string, daily: number, monthly: number) => {
-    try { await api.put(`/admin/limits/${role}`, { dailyLimit: daily, monthlyLimit: monthly }); toast.success('Updated'); } catch { toast.error('Failed'); }
+    try { await api.put(`/admin?sub=limits&id=${role}`, { dailyLimit: daily, monthlyLimit: monthly }); toast.success('Updated'); } catch { toast.error('Failed'); }
   };
 
   const tabs: { id: Tab; label: string; icon: any }[] = [

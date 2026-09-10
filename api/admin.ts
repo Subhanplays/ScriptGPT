@@ -104,7 +104,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.json({ message: 'Role updated' });
     }
     if (id && sub === 'limits' && req.method === 'PUT') {
-      await prisma.user.update({ where: { id }, data: { dailyLimit: body.dailyLimit, monthlyLimit: body.monthlyLimit } });
+      const validRoles = ['USER', 'ADMIN'];
+      if (validRoles.includes(id)) {
+        await prisma.usageLimit.upsert({ where: { role: id as any }, update: { dailyLimit: body.dailyLimit, monthlyLimit: body.monthlyLimit }, create: { role: id as any, dailyLimit: body.dailyLimit, monthlyLimit: body.monthlyLimit } });
+      } else {
+        await prisma.user.update({ where: { id }, data: { dailyLimit: body.dailyLimit, monthlyLimit: body.monthlyLimit } });
+      }
       return res.json({ message: 'Limits updated' });
     }
     if (id && req.method === 'DELETE') {
