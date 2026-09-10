@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { GoogleGenAI } from '@google/genai';
 import jwt from 'jsonwebtoken';
 import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
@@ -37,14 +37,24 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Connection', 'keep-alive');
 
   try {
-    const genAI = new GoogleGenerativeAI(adminKey);
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash-lite', systemInstruction: SYSTEM_PROMPT });
-    const result = await model.generateContentStream(IDEAS_PROMPT);
+    const ai = new GoogleGenAI({ apiKey: adminKey });
+    const response = await ai.models.generateContentStream({
+      model: 'gemini-2.5-flash',
+      contents: IDEAS_PROMPT,
+      config: { systemInstruction: SYSTEM_PROMPT },
+    });
     let fullText = '';
-    for await (const chunk of result.stream) { fullText += chunk.text(); res.write(`data: ${JSON.stringify({ text: chunk.text(), done: false })}\n\n`); }
+    for await (const chunk of response) {
+      const text = chunk.text || '';
+      if (text) {
+        fullText += text;
+        res.write(`data: ${JSON.stringify({ text, done: false })}\n\n`);
+      }
+    }
     res.write(`data: ${JSON.stringify({ text: '', done: true })}\n\n`);
     res.end();
   } catch (error: any) {
-    if (!res.writableEnded) { res.write(`data: ${JSON.stringify({ error: error.message, done: true })}\n\n`); res.end(); }
+    console.error('Ideas error:', error.message);
+    if (!res.writableEnded) { res.write(`data: ${JSON.stringify({ error: error.message || 'Failed to generate ideas', done: true })}\n\n`); res.end(); }
   }
 }

@@ -5,7 +5,7 @@
     "vercel-build": "prisma generate && prisma migrate deploy"
   },
   "dependencies": {
-    "@google/generative-ai": "^0.21.0",
+    "@google/genai": "^1.0.0",
     "@prisma/client": "^6.1.0",
     "@vercel/node": "^3.0.0",
     "bcryptjs": "^2.4.3",
