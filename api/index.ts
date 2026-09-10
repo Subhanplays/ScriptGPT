@@ -14,6 +14,10 @@ const app = express();
 app.use(cors({ origin: process.env.CORS_ORIGIN || '*', credentials: true }));
 app.use(express.json({ limit: '10mb' }));
 
+app.get('/api/health', (_req, res) => {
+  res.json({ status: 'ok', dbUrl: process.env.DATABASE_URL ? 'set' : 'missing' });
+});
+
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/conversations', conversationRoutes);
@@ -22,12 +26,18 @@ app.use('/api/scriptgpt', scriptGptRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/usage', usageRoutes);
 
-app.get('/api/health', (_req, res) => {
-  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+app.use((err: any, _req: any, res: any, _next: any) => {
+  console.error('Unhandled error:', err);
+  res.status(500).json({ error: err.message || 'Internal server error' });
 });
 
 const handler = async (req: any, res: any) => {
-  return app(req, res);
+  try {
+    return await app(req, res);
+  } catch (err: any) {
+    console.error('Handler error:', err);
+    res.status(500).json({ error: err.message });
+  }
 };
 
 export default handler;
