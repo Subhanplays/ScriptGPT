@@ -170,13 +170,13 @@ export default function Chat() {
         {convs.map((conv) => (
           <div
             key={conv.id}
-            className={`group flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer text-sm transition-colors`}
+            className={`sidebar-item group flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer text-sm`}
             style={{ background: conversationId === conv.id ? '#f0f0f0' : 'transparent', color: conversationId === conv.id ? '#111827' : '#374151' }}
             onClick={() => { navigate(`/chat/${conv.id}`); setMobileMenuOpen(false); }}
           >
             <Pencil className="w-3.5 h-3.5 flex-shrink-0" style={{ color: '#9ca3af' }} />
             <span className="truncate flex-1">{conv.title}</span>
-            <button onClick={(e) => { e.stopPropagation(); handleDeleteConversation(conv.id); }} className="opacity-0 group-hover:opacity-100 transition-opacity p-1" style={{ color: '#9ca3af' }}>
+            <button onClick={(e) => { e.stopPropagation(); handleDeleteConversation(conv.id); }} className="opacity-0 group-hover:opacity-100 transition-all duration-150 p-1 rounded hover:bg-gray-200" style={{ color: '#9ca3af' }}>
               <Trash2 className="w-3.5 h-3.5" />
             </button>
           </div>
@@ -273,11 +273,17 @@ export default function Chat() {
         {/* Messages */}
         <div className="flex-1 overflow-y-auto">
           {!hasMessages ? (
-            <div className="flex flex-col items-center justify-center h-full px-4">
-              <h1 className="text-2xl font-semibold mb-6" style={{ color: '#111827' }}>What can I help with?</h1>
-              <div className="w-full max-w-2xl grid grid-cols-2 gap-2">
+            <div className="flex flex-col items-center justify-center h-full px-4 page-transition">
+              <div className="mb-8 text-center">
+                <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 animate-scale-in" style={{ background: '#10a37f', boxShadow: '0 4px 20px rgba(16, 163, 127, 0.3)' }}>
+                  <Terminal className="w-8 h-8 text-white" />
+                </div>
+                <h1 className="text-3xl font-bold mb-2 animate-slide-up" style={{ color: '#111827' }}>What can I help with?</h1>
+                <p className="text-sm animate-slide-up" style={{ color: '#6b7280', animationDelay: '0.1s' }}>Ask me anything about scripting, Linux, or system administration</p>
+              </div>
+              <div className="w-full max-w-2xl grid grid-cols-2 gap-2.5">
                 {suggestions.map((s, i) => (
-                  <button key={i} onClick={() => setInput(s)} className="text-left px-4 py-3 rounded-xl text-sm transition-all" style={{ background: '#f7f7f8', color: '#374151', border: '1px solid #e5e7eb' }}>
+                  <button key={i} onClick={() => setInput(s)} className="text-left px-4 py-3.5 rounded-xl text-sm transition-all duration-200 hover:shadow-md hover:border-gray-300 hover:-translate-y-0.5 animate-slide-up" style={{ background: '#f7f7f8', color: '#374151', border: '1px solid #e5e7eb', animationDelay: `${i * 0.05}s` }}>
                     {s}
                   </button>
                 ))}
@@ -286,7 +292,7 @@ export default function Chat() {
           ) : (
             <div className="max-w-3xl mx-auto py-6 px-4 space-y-6">
               {messages.map((msg) => (
-                <div key={msg.id} className="animate-fade-in">
+                <div key={msg.id} className="message-enter">
                   {msg.role === 'user' ? (
                     <div className="flex justify-end gap-3 mb-6">
                       <div className="max-w-[80%] px-5 py-3 rounded-3xl" style={{ background: '#f0f0f0', color: '#111827' }}>
@@ -298,21 +304,21 @@ export default function Chat() {
                     </div>
                   ) : (
                     <div className="flex gap-3 mb-6">
-                      <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: '#10a37f' }}>
+                      <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: '#10a37f', boxShadow: '0 2px 8px rgba(16, 163, 127, 0.2)' }}>
                         <Terminal className="w-4 h-4" style={{ color: '#fff' }} />
                       </div>
                       <div className="max-w-[85%] min-w-0 flex-1">
                         <div className="text-[15px]">
                           <Markdown components={markdownComponents}>{msg.content}</Markdown>
                         </div>
-                        <div className="flex items-center gap-1 mt-3">
-                          <button onClick={() => handleCopyCode(msg.content)} className="p-1.5 rounded-md transition-colors" style={{ color: '#9ca3af' }}>
+                        <div className="flex items-center gap-1 mt-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <button onClick={() => handleCopyCode(msg.content)} className="p-1.5 rounded-md transition-all duration-150 hover:bg-gray-100" style={{ color: '#9ca3af' }}>
                             <Copy className="w-4 h-4" />
                           </button>
-                          <button className="p-1.5 rounded-md transition-colors" style={{ color: '#9ca3af' }}>
+                          <button className="p-1.5 rounded-md transition-all duration-150 hover:bg-gray-100" style={{ color: '#9ca3af' }}>
                             <ThumbsUp className="w-4 h-4" />
                           </button>
-                          <button className="p-1.5 rounded-md transition-colors" style={{ color: '#9ca3af' }}>
+                          <button className="p-1.5 rounded-md transition-all duration-150 hover:bg-gray-100" style={{ color: '#9ca3af' }}>
                             <ThumbsDown className="w-4 h-4" />
                           </button>
                         </div>
@@ -341,17 +347,17 @@ export default function Chat() {
               )}
 
               {thinking && (
-                <div className="flex gap-3 mb-6">
-                  <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: '#10a37f' }}>
+                <div className="flex gap-3 mb-6 message-enter">
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: '#10a37f', boxShadow: '0 2px 8px rgba(16, 163, 127, 0.2)' }}>
                     <Terminal className="w-4 h-4" style={{ color: '#fff' }} />
                   </div>
-                  <div className="flex items-center gap-2 py-2 px-4 rounded-2xl" style={{ background: '#f7f7f8' }}>
-                    <div className="flex gap-1.5">
-                      <div className="w-2 h-2 rounded-full animate-bounce" style={{ background: '#10a37f', animationDelay: '0ms' }} />
-                      <div className="w-2 h-2 rounded-full animate-bounce" style={{ background: '#10a37f', animationDelay: '150ms' }} />
-                      <div className="w-2 h-2 rounded-full animate-bounce" style={{ background: '#10a37f', animationDelay: '300ms' }} />
+                  <div className="flex items-center gap-3 py-3 px-5 rounded-2xl animate-shimmer" style={{ background: '#f7f7f8', border: '1px solid #e5e7eb' }}>
+                    <div className="flex gap-1">
+                      <div className="typing-dot w-2 h-2 rounded-full" style={{ background: '#10a37f' }} />
+                      <div className="typing-dot w-2 h-2 rounded-full" style={{ background: '#10a37f' }} />
+                      <div className="typing-dot w-2 h-2 rounded-full" style={{ background: '#10a37f' }} />
                     </div>
-                    <span className="text-xs ml-1" style={{ color: '#6b7280' }}>Thinking...</span>
+                    <span className="text-sm font-medium" style={{ color: '#6b7280' }}>Thinking...</span>
                   </div>
                 </div>
               )}

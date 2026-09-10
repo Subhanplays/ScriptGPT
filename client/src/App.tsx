@@ -9,14 +9,14 @@ import Settings from './pages/Settings';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
-  if (loading) return <div className="min-h-screen flex items-center justify-center" style={{ background: '#ffffff' }}><div className="flex flex-col items-center gap-4"><div className="w-8 h-8 rounded-full animate-spin" style={{ border: '2px solid #e5e7eb', borderTopColor: '#10a37f' }} /><p className="text-sm" style={{ color: '#6b7280' }}>Loading ScriptGPT...</p></div></div>;
+  if (loading) return <div className="min-h-screen flex items-center justify-center" style={{ background: '#ffffff' }}><div className="flex flex-col items-center gap-4 animate-fade-in"><div className="w-12 h-12 rounded-2xl flex items-center justify-center animate-pulse-subtle" style={{ background: '#10a37f', boxShadow: '0 4px 20px rgba(16, 163, 127, 0.3)' }}><span className="text-white text-lg font-bold">S</span></div><p className="text-sm font-medium" style={{ color: '#6b7280' }}>Loading ScriptGPT...</p></div></div>;
   if (!user) return <Navigate to="/login" />;
   return <>{children}</>;
 }
 
 function AdminRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
-  if (loading) return <div className="min-h-screen flex items-center justify-center" style={{ background: '#ffffff' }}><div className="flex flex-col items-center gap-4"><div className="w-8 h-8 rounded-full animate-spin" style={{ border: '2px solid #e5e7eb', borderTopColor: '#10a37f' }} /><p className="text-sm" style={{ color: '#6b7280' }}>Loading ScriptGPT...</p></div></div>;
+  if (loading) return <div className="min-h-screen flex items-center justify-center" style={{ background: '#ffffff' }}><div className="flex flex-col items-center gap-4 animate-fade-in"><div className="w-12 h-12 rounded-2xl flex items-center justify-center animate-pulse-subtle" style={{ background: '#10a37f', boxShadow: '0 4px 20px rgba(16, 163, 127, 0.3)' }}><span className="text-white text-lg font-bold">S</span></div><p className="text-sm font-medium" style={{ color: '#6b7280' }}>Loading ScriptGPT...</p></div></div>;
   if (!user) return <Navigate to="/login" />;
   if (user.role !== 'ADMIN') return <Navigate to="/" />;
   return <>{children}</>;
@@ -24,7 +24,7 @@ function AdminRoute({ children }: { children: React.ReactNode }) {
 
 function AppRoutes() {
   const { user, loading } = useAuth();
-  if (loading) return <div className="min-h-screen flex items-center justify-center" style={{ background: '#ffffff' }}><div className="flex flex-col items-center gap-4"><div className="w-8 h-8 rounded-full animate-spin" style={{ border: '2px solid #e5e7eb', borderTopColor: '#10a37f' }} /><p className="text-sm" style={{ color: '#6b7280' }}>Loading ScriptGPT...</p></div></div>;
+  if (loading) return <div className="min-h-screen flex items-center justify-center" style={{ background: '#ffffff' }}><div className="flex flex-col items-center gap-4 animate-fade-in"><div className="w-12 h-12 rounded-2xl flex items-center justify-center animate-pulse-subtle" style={{ background: '#10a37f', boxShadow: '0 4px 20px rgba(16, 163, 127, 0.3)' }}><span className="text-white text-lg font-bold">S</span></div><p className="text-sm font-medium" style={{ color: '#6b7280' }}>Loading ScriptGPT...</p></div></div>;
 
   return (
     <Routes>
