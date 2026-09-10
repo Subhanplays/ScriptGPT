@@ -1,7 +1,9 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { GoogleGenAI } from '@google/genai';
 import jwt from 'jsonwebtoken';
-import { prisma } from '../lib/prisma';
+import { PrismaClient } from '@prisma/client';
+const prisma = globalThis.__prisma || new PrismaClient();
+if (!globalThis.__prisma) globalThis.__prisma = prisma;
 
 const SYSTEM_PROMPT = `You are ScriptGPT, a helpful AI assistant specializing in Bash/Shell scripting, Linux, system administration, DevOps, and command-line operations. You can help with any question but your expertise is in scripting and system admin.
 

@@ -1,5 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { prisma } from '../lib/prisma';
+import { PrismaClient } from '@prisma/client';
+const prisma = globalThis.__prisma || new PrismaClient();
+if (!globalThis.__prisma) globalThis.__prisma = prisma;
 
 function verify(req: VercelRequest): string | null {
   const t = req.headers.authorization?.replace('Bearer ', '');

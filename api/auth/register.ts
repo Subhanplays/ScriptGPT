@@ -1,7 +1,9 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { prisma } from '../lib/prisma';
+import { PrismaClient } from '@prisma/client';
+const prisma = globalThis.__prisma || new PrismaClient();
+if (!globalThis.__prisma) globalThis.__prisma = prisma;
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Access-Control-Allow-Origin', process.env.CORS_ORIGIN || '*');
