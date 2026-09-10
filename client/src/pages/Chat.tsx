@@ -22,6 +22,7 @@ export default function Chat() {
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [streaming, setStreaming] = useState(false);
+  const [thinking, setThinking] = useState(false);
   const [currentStreamingText, setCurrentStreamingText] = useState('');
   const [aiProvider, setAiProvider] = useState<'SCRIPTGPT' | 'GEMINI'>('SCRIPTGPT');
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -57,7 +58,8 @@ export default function Chat() {
     const message = input.trim();
     setInput('');
     setLoading(true);
-    setStreaming(true);
+    setStreaming(false);
+    setThinking(true);
     setCurrentStreamingText('');
     setMessages((prev) => [...prev, { id: Date.now().toString(), conversationId: conversationId || '', role: 'user', content: message, createdAt: new Date().toISOString() }]);
 
@@ -66,7 +68,7 @@ export default function Chat() {
       let fullText = '';
       let newConversationId = conversationId;
       await api.streamChat(endpoint, { conversationId, message },
-        (text) => { fullText += text; setCurrentStreamingText(fullText); },
+        (text) => { fullText += text; setCurrentStreamingText(fullText); setThinking(false); setStreaming(true); },
         (convId) => {
           if (convId && !newConversationId) { newConversationId = convId; navigate(`/chat/${convId}`, { replace: true }); }
           setMessages((prev) => [...prev, { id: (Date.now() + 1).toString(), conversationId: newConversationId || '', role: 'assistant', content: fullText, aiProvider, createdAt: new Date().toISOString() }]);
@@ -75,7 +77,7 @@ export default function Chat() {
         (error) => { toast.error(error); setCurrentStreamingText(''); }
       );
     } catch (e: any) { toast.error(e.message || 'Failed'); setCurrentStreamingText(''); }
-    finally { setLoading(false); setStreaming(false); }
+    finally { setLoading(false); setStreaming(false); setThinking(false); }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); } };
@@ -338,17 +340,18 @@ export default function Chat() {
                 </div>
               )}
 
-              {loading && !streaming && (
+              {thinking && (
                 <div className="flex gap-3 mb-6">
                   <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: '#10a37f' }}>
                     <Terminal className="w-4 h-4" style={{ color: '#fff' }} />
                   </div>
-                  <div className="flex items-center gap-2 py-2">
-                    <div className="flex gap-1">
-                      <div className="w-2 h-2 rounded-full animate-bounce" style={{ background: '#d1d5db', animationDelay: '0ms' }} />
-                      <div className="w-2 h-2 rounded-full animate-bounce" style={{ background: '#d1d5db', animationDelay: '150ms' }} />
-                      <div className="w-2 h-2 rounded-full animate-bounce" style={{ background: '#d1d5db', animationDelay: '300ms' }} />
+                  <div className="flex items-center gap-2 py-2 px-4 rounded-2xl" style={{ background: '#f7f7f8' }}>
+                    <div className="flex gap-1.5">
+                      <div className="w-2 h-2 rounded-full animate-bounce" style={{ background: '#10a37f', animationDelay: '0ms' }} />
+                      <div className="w-2 h-2 rounded-full animate-bounce" style={{ background: '#10a37f', animationDelay: '150ms' }} />
+                      <div className="w-2 h-2 rounded-full animate-bounce" style={{ background: '#10a37f', animationDelay: '300ms' }} />
                     </div>
+                    <span className="text-xs ml-1" style={{ color: '#6b7280' }}>Thinking...</span>
                   </div>
                 </div>
               )}
