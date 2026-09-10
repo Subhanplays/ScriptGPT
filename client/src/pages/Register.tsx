@@ -23,7 +23,7 @@ export default function Register() {
     setLoading(true);
     try {
       await register(email, username, password);
-      toast.success('Account created! Welcome to ScriptGPT!');
+      toast.success('Account created!');
       navigate('/');
     } catch (error: any) {
       toast.error(error.message || 'Registration failed');
@@ -33,93 +33,92 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen bg-dark-950 flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-scriptgpt-600/10 border border-scriptgpt-600/20 mb-4">
-            <Terminal className="w-8 h-8 text-scriptgpt-500" />
+    <div className="min-h-screen flex items-center justify-center p-4" style={{ background: '#212121' }}>
+      <div className="w-full max-w-sm">
+        <div className="text-center mb-10">
+          <div className="inline-flex items-center justify-center w-12 h-12 rounded-full mb-4" style={{ background: '#4c6ef5' }}>
+            <Terminal className="w-6 h-6 text-white" />
           </div>
-          <h1 className="text-3xl font-bold text-dark-50">ScriptGPT</h1>
-          <p className="text-dark-400 mt-2">Create your account</p>
+          <h1 className="text-2xl font-semibold text-white">Create your account</h1>
+          <p className="text-[#868e96] mt-1 text-sm">Get started with ScriptGPT</p>
         </div>
 
-        <div className="card">
-          <h2 className="text-xl font-semibold text-dark-50 mb-6">Get started</h2>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-dark-300 mb-1.5">Email</label>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full px-4 py-3 rounded-xl text-white placeholder:text-[#495057] outline-none text-sm border border-[#3a3a3a] focus:border-[#555] transition-colors"
+              style={{ background: '#2a2a2a' }}
+              placeholder="Email address"
+              required
+            />
+          </div>
+          <div>
+            <input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              className="w-full px-4 py-3 rounded-xl text-white placeholder:text-[#495057] outline-none text-sm border border-[#3a3a3a] focus:border-[#555] transition-colors"
+              style={{ background: '#2a2a2a' }}
+              placeholder="Username"
+              required
+            />
+          </div>
+          <div>
+            <div className="relative">
               <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="input-field w-full"
-                placeholder="you@example.com"
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-dark-300 mb-1.5">Username</label>
-              <input
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                className="input-field w-full"
-                placeholder="scriptmaster"
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-dark-300 mb-1.5">Password</label>
-              <div className="relative">
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="input-field w-full pr-10"
-                  placeholder="••••••••"
-                  required
-                  minLength={6}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-dark-500 hover:text-dark-300"
-                >
-                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </button>
-              </div>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-dark-300 mb-1.5">Confirm Password</label>
-              <input
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                className="input-field w-full"
-                placeholder="••••••••"
+                type={showPassword ? 'text' : 'password'}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-4 py-3 pr-10 rounded-xl text-white placeholder:text-[#495057] outline-none text-sm border border-[#3a3a3a] focus:border-[#555] transition-colors"
+                style={{ background: '#2a2a2a' }}
+                placeholder="Password"
                 required
                 minLength={6}
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-[#495057] hover:text-[#868e96] transition-colors"
+              >
+                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
             </div>
-            <button
-              type="submit"
-              disabled={loading}
-              className="btn-primary w-full flex items-center justify-center gap-2"
-            >
-              {loading ? (
-                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-              ) : (
-                'Create account'
-              )}
-            </button>
-          </form>
-          <p className="text-center text-dark-400 mt-6">
-            Already have an account?{' '}
-            <Link to="/login" className="text-scriptgpt-400 hover:text-scriptgpt-300">
-              Sign in
-            </Link>
-          </p>
-        </div>
+          </div>
+          <div>
+            <input
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              className="w-full px-4 py-3 rounded-xl text-white placeholder:text-[#495057] outline-none text-sm border border-[#3a3a3a] focus:border-[#555] transition-colors"
+              style={{ background: '#2a2a2a' }}
+              placeholder="Confirm password"
+              required
+              minLength={6}
+            />
+          </div>
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full py-3 rounded-xl text-white font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+            style={{ background: '#4c6ef5' }}
+          >
+            {loading ? (
+              <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin mx-auto" />
+            ) : (
+              'Create account'
+            )}
+          </button>
+        </form>
+
+        <p className="text-center text-[#868e96] mt-6 text-sm">
+          Already have an account?{' '}
+          <Link to="/login" className="text-[#748ffc] hover:text-[#91a7ff]">
+            Sign in
+          </Link>
+        </p>
       </div>
     </div>
   );
