@@ -1,15 +1,13 @@
 import express from 'express';
 import cors from 'cors';
-import { PrismaClient } from '@prisma/client';
-import authRoutes from './routes/auth';
-import userRoutes from './routes/users';
-import conversationRoutes from './routes/conversations';
-import geminiRoutes from './routes/gemini';
-import adminRoutes from './routes/admin';
-import usageRoutes from './routes/usage';
-import scriptGptRoutes from './routes/scriptgpt';
-
-export const prisma = new PrismaClient();
+import { prisma } from './src/db';
+import authRoutes from './src/routes/auth';
+import userRoutes from './src/routes/users';
+import conversationRoutes from './src/routes/conversations';
+import geminiRoutes from './src/routes/gemini';
+import adminRoutes from './src/routes/admin';
+import usageRoutes from './src/routes/usage';
+import scriptGptRoutes from './src/routes/scriptgpt';
 
 const app = express();
 

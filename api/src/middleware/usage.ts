@@ -1,6 +1,6 @@
 import { Response, NextFunction } from 'express';
 import { AuthRequest } from './auth';
-import { prisma } from '../index';
+import { prisma } from '../db';
 
 export const trackUsage = async (
   req: AuthRequest,

@@ -1,6 +1,6 @@
 import { Router, Response } from 'express';
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { prisma } from '../index';
+import { prisma } from '../db';
 import { authenticate, AuthRequest } from '../middleware/auth';
 import { trackUsage, logUsage } from '../middleware/usage';
 import { SCRIPTGPT_SYSTEM_PROMPT, SCRIPT_IDEAS_PROMPT } from '../utils/scriptgpt-prompt';
