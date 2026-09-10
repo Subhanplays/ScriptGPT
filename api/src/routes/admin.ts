@@ -79,7 +79,7 @@ router.put('/users/:id/role', async (req: AuthRequest, res: Response) => {
     if (!['USER', 'ADMIN'].includes(role)) {
       return res.status(400).json({ error: 'Invalid role' });
     }
-    await prisma.user.update({ where: { id: req.params.id }, data: { role } });
+    await prisma.user.update({ where: { id: req.params.id as string }, data: { role } });
     res.json({ message: 'Role updated' });
   } catch (error) {
     res.status(500).json({ error: 'Failed to update role' });
@@ -90,7 +90,7 @@ router.put('/users/:id/limits', async (req: AuthRequest, res: Response) => {
   try {
     const { dailyLimit, monthlyLimit } = req.body;
     await prisma.user.update({
-      where: { id: req.params.id },
+      where: { id: req.params.id as string },
       data: { dailyLimit, monthlyLimit },
     });
     res.json({ message: 'Limits updated' });
@@ -101,10 +101,10 @@ router.put('/users/:id/limits', async (req: AuthRequest, res: Response) => {
 
 router.delete('/users/:id', async (req: AuthRequest, res: Response) => {
   try {
-    if (req.params.id === req.user!.id) {
+    if ((req.params.id as string) === req.user!.id) {
       return res.status(400).json({ error: 'Cannot delete yourself' });
     }
-    await prisma.user.delete({ where: { id: req.params.id } });
+    await prisma.user.delete({ where: { id: req.params.id as string } });
     res.json({ message: 'User deleted' });
   } catch (error) {
     res.status(500).json({ error: 'Failed to delete user' });

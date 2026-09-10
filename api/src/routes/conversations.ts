@@ -37,7 +37,7 @@ router.post('/', authenticate, async (req: AuthRequest, res: Response) => {
 router.get('/:id', authenticate, async (req: AuthRequest, res: Response) => {
   try {
     const conversation = await prisma.conversation.findFirst({
-      where: { id: req.params.id, userId: req.user!.id },
+      where: { id: req.params.id as string, userId: req.user!.id },
       include: { messages: { orderBy: { createdAt: 'asc' } } },
     });
     if (!conversation) return res.status(404).json({ error: 'Conversation not found' });
@@ -51,7 +51,7 @@ router.put('/:id', authenticate, async (req: AuthRequest, res: Response) => {
   try {
     const { title, status } = req.body;
     const conversation = await prisma.conversation.updateMany({
-      where: { id: req.params.id, userId: req.user!.id },
+      where: { id: req.params.id as string, userId: req.user!.id },
       data: { ...(title && { title }), ...(status && { status }) },
     });
     res.json({ message: 'Updated' });
@@ -63,7 +63,7 @@ router.put('/:id', authenticate, async (req: AuthRequest, res: Response) => {
 router.delete('/:id', authenticate, async (req: AuthRequest, res: Response) => {
   try {
     await prisma.conversation.updateMany({
-      where: { id: req.params.id, userId: req.user!.id },
+      where: { id: req.params.id as string, userId: req.user!.id },
       data: { status: 'DELETED' },
     });
     res.json({ message: 'Deleted' });
@@ -75,12 +75,12 @@ router.delete('/:id', authenticate, async (req: AuthRequest, res: Response) => {
 router.get('/:id/messages', authenticate, async (req: AuthRequest, res: Response) => {
   try {
     const conversation = await prisma.conversation.findFirst({
-      where: { id: req.params.id, userId: req.user!.id },
+      where: { id: req.params.id as string, userId: req.user!.id },
     });
     if (!conversation) return res.status(404).json({ error: 'Conversation not found' });
 
     const messages = await prisma.message.findMany({
-      where: { conversationId: req.params.id },
+      where: { conversationId: req.params.id as string },
       orderBy: { createdAt: 'asc' },
     });
     res.json(messages);
