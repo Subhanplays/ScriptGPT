@@ -2,7 +2,7 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { GoogleGenAI } from '@google/genai';
 import jwt from 'jsonwebtoken';
 import { PrismaClient } from '@prisma/client';
-const prisma = new PrismaClient({ datasources: { db: { url: process.env.DATABASE_URL } }, connectionLimit: 2, poolTimeout: 30000 });;
+const prisma = new PrismaClient();
 
 const SYSTEM_PROMPT = `You are ScriptGPT, a helpful AI assistant. You specialize in Bash/Shell scripting, Linux, system administration, DevOps, and command-line operations, but you can help with any question. Be helpful, concise, and practical.`;
 

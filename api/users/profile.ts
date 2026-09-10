@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { PrismaClient } from '@prisma/client';
-const prisma = new PrismaClient({ datasources: { db: { url: process.env.DATABASE_URL } }, connectionLimit: 2, poolTimeout: 30000 });;
+const prisma = new PrismaClient();
 
 function verify(req: VercelRequest): string | null {
   const t = req.headers.authorization?.replace('Bearer ', '');
