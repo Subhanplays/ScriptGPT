@@ -39,7 +39,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
     const ai = new GoogleGenAI({ apiKey: adminKey });
     const response = await ai.models.generateContentStream({
-      model: 'gemini-2.5-flash',
+      model: 'gemini-3.6-flash',
       contents: IDEAS_PROMPT,
       config: { systemInstruction: SYSTEM_PROMPT },
     });

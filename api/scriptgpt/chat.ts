@@ -65,8 +65,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       parts: [{ text: m.content }]
     })).filter(m => m.parts[0].text.trim() !== '');
 
+    const MODEL = 'gemini-3.6-flash';
+
     const chat = ai.chats.create({
-      model: 'gemini-2.5-flash',
+      model: MODEL,
       config: { systemInstruction: SYSTEM_PROMPT },
       history: history as any,
     });
@@ -86,7 +88,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     res.end();
 
     if (fullText) {
-      await prisma.message.create({ data: { conversationId: conversation.id, role: 'assistant', content: fullText, aiProvider: 'SCRIPTGPT', model: 'gemini-2.5-flash' } });
+      await prisma.message.create({ data: { conversationId: conversation.id, role: 'assistant', content: fullText, aiProvider: 'SCRIPTGPT', model: MODEL } });
       await prisma.conversation.update({ where: { id: conversation.id }, data: { updatedAt: new Date() } });
     }
   } catch (error: any) {
