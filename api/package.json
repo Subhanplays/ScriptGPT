@@ -2,7 +2,7 @@
   "name": "scriptgpt-api",
   "version": "1.0.0",
   "scripts": {
-    "vercel-build": "prisma generate"
+    "vercel-build": "prisma generate && prisma migrate deploy"
   },
   "dependencies": {
     "@google/generative-ai": "^0.21.0",

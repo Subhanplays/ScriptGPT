@@ -1,7 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { prisma } from '../../db';
+import { PrismaClient } from '@prisma/client';
+const prisma = new PrismaClient();
 
 function verify(req: VercelRequest): string | null {
   const t = req.headers.authorization?.replace('Bearer ', '');
@@ -16,15 +16,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method === 'OPTIONS') return res.status(200).end();
   const userId = verify(req);
   if (!userId) return res.status(401).json({ error: 'Authentication required' });
-
   try {
-    const { currentPassword, newPassword } = req.body;
-    const user = await prisma.user.findUnique({ where: { id: userId } });
-    if (!user) return res.status(404).json({ error: 'User not found' });
-    const valid = await bcrypt.compare(currentPassword, user.password);
-    if (!valid) return res.status(401).json({ error: 'Current password is incorrect' });
-    const hashed = await bcrypt.hash(newPassword, 12);
-    await prisma.user.update({ where: { id: userId }, data: { password: hashed } });
-    return res.json({ message: 'Password updated' });
+    const { geminiApiKey, geminiModel } = req.body;
+    const d: any = {};
+    if (geminiApiKey !== undefined) d.geminiApiKey = geminiApiKey;
+    if (geminiModel) d.geminiModel = geminiModel;
+    await prisma.user.update({ where: { id: userId }, data: d });
+    return res.json({ message: 'Gemini settings updated' });
   } catch (e: any) { return res.status(500).json({ error: e.message }); }
 }

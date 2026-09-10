@@ -1,8 +1,10 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import jwt from 'jsonwebtoken';
-import { prisma } from '../../db';
-import { SCRIPTGPT_SYSTEM_PROMPT } from '../../src/utils/scriptgpt-prompt';
+import { PrismaClient } from '@prisma/client';
+const prisma = new PrismaClient();
+
+const SYSTEM_PROMPT = `You are ScriptGPT, an AI assistant exclusively dedicated to creating, modifying, and explaining Bash/Shell scripts. Your tagline is: "Tell me what you want your shell script to do, and ScriptGPT creates it." You can create, modify, fix, improve, explain .sh scripts and generate ideas. You MUST refuse general questions, essays, code in other languages, homework, entertainment, math, or product recommendations. When creating scripts, ALWAYS include the complete .sh code in a bash code block, a brief explanation, usage instructions, required dependencies, and safety warnings. Always use #!/bin/bash, proper quoting, error handling, comments, meaningful names, and set -euo pipefail when appropriate.`;
 
 function verify(req: VercelRequest): string | null {
   const t = req.headers.authorization?.replace('Bearer ', '');
@@ -49,7 +51,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const messages = await prisma.message.findMany({ where: { conversationId: conversation.id }, orderBy: { createdAt: 'asc' } });
 
   const genAI = new GoogleGenerativeAI(user.geminiApiKey);
-  const model = genAI.getGenerativeModel({ model: user.geminiModel || 'gemini-2.0-flash', systemInstruction: SCRIPTGPT_SYSTEM_PROMPT });
+  const model = genAI.getGenerativeModel({ model: user.geminiModel || 'gemini-2.0-flash', systemInstruction: SYSTEM_PROMPT });
   const chat = model.startChat({ history: messages.slice(0, -1).map(m => ({ role: m.role === 'assistant' ? 'model' : 'user', parts: [{ text: m.content }] })) });
 
   res.setHeader('Content-Type', 'text/event-stream');

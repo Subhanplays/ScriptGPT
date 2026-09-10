@@ -1,12 +1,14 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import jwt from 'jsonwebtoken';
-import { prisma } from '../../db';
+import { PrismaClient } from '@prisma/client';
+const prisma = new PrismaClient();
 
 function verify(req: VercelRequest): string | null {
   const t = req.headers.authorization?.replace('Bearer ', '');
   if (!t) return null;
   try { return (jwt.verify(t, process.env.JWT_SECRET!) as { userId: string }).userId; } catch { return null; }
 }
+
+import jwt from 'jsonwebtoken';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Access-Control-Allow-Origin', process.env.CORS_ORIGIN || '*');
@@ -15,7 +17,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method === 'OPTIONS') return res.status(200).end();
   const userId = verify(req);
   if (!userId) return res.status(401).json({ error: 'Authentication required' });
-
   try {
     if (req.method === 'GET') {
       const user = await prisma.user.findUnique({ where: { id: userId } });

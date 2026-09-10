@@ -1,7 +1,9 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import jwt from 'jsonwebtoken';
-import { SCRIPTGPT_SYSTEM_PROMPT, SCRIPT_IDEAS_PROMPT } from '../../src/utils/scriptgpt-prompt';
+
+const SYSTEM_PROMPT = `You are ScriptGPT, an AI assistant exclusively dedicated to creating, modifying, and explaining Bash/Shell scripts.`;
+const IDEAS_PROMPT = `Generate a list of 5-10 useful Bash script ideas. For each idea, provide: 1. A catchy title 2. A one-sentence description 3. Difficulty level (beginner/intermediate/advanced) 4. One use case. Focus on practical scripts for sysadmins, DevOps, and developers. Include automation, maintenance, backup, monitoring, and productivity scripts. Format as a numbered list.`;
 
 function verify(req: VercelRequest): string | null {
   const t = req.headers.authorization?.replace('Bearer ', '');
@@ -30,8 +32,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   try {
     const genAI = new GoogleGenerativeAI(adminKey);
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash', systemInstruction: SCRIPTGPT_SYSTEM_PROMPT });
-    const result = await model.generateContentStream(SCRIPT_IDEAS_PROMPT);
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash', systemInstruction: SYSTEM_PROMPT });
+    const result = await model.generateContentStream(IDEAS_PROMPT);
     let fullText = '';
     for await (const chunk of result.stream) { fullText += chunk.text(); res.write(`data: ${JSON.stringify({ text: chunk.text(), done: false })}\n\n`); }
     res.write(`data: ${JSON.stringify({ text: '', done: true })}\n\n`);

@@ -63,7 +63,7 @@ export default function Chat() {
 
   const loadConversation = async (id: string) => {
     try {
-      const data = await api.get<Conversation & { messages: Message[] }>(`/conversations/${id}`);
+      const data = await api.get<Conversation & { messages: Message[] }>(`/conversations?id=${id}`);
       setMessages(data.messages || []);
       setAiProvider(data.aiProvider as any);
     } catch (error) {
@@ -148,7 +148,7 @@ export default function Chat() {
 
   const handleDeleteConversation = async (id: string) => {
     try {
-      await api.delete(`/conversations/${id}`);
+      await api.delete(`/conversations?id=${id}`);
       setConversations((prev) => prev.filter((c) => c.id !== id));
       if (conversationId === id) navigate('/chat');
       toast.success('Conversation deleted');
