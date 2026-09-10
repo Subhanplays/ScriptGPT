@@ -27,14 +27,14 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4" style={{ background: '#212121' }}>
+    <div className="min-h-screen flex items-center justify-center p-4" style={{ background: '#ffffff' }}>
       <div className="w-full max-w-sm">
-        <div className="text-center mb-10">
-          <div className="inline-flex items-center justify-center w-12 h-12 rounded-full mb-4" style={{ background: '#4c6ef5' }}>
-            <Terminal className="w-6 h-6 text-white" />
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center justify-center w-12 h-12 rounded-full mb-4" style={{ background: '#10a37f' }}>
+            <Terminal className="w-6 h-6" style={{ color: '#fff' }} />
           </div>
-          <h1 className="text-2xl font-semibold text-white">Welcome back</h1>
-          <p className="text-[#868e96] mt-1 text-sm">Sign in to continue to ScriptGPT</p>
+          <h1 className="text-2xl font-semibold" style={{ color: '#111827' }}>Welcome back</h1>
+          <p className="mt-1 text-sm" style={{ color: '#6b7280' }}>Sign in to continue to ScriptGPT</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -43,8 +43,8 @@ export default function Login() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl text-white placeholder:text-[#495057] outline-none text-sm border border-[#3a3a3a] focus:border-[#555] transition-colors"
-              style={{ background: '#2a2a2a' }}
+              className="w-full px-4 py-3 rounded-xl outline-none text-sm"
+              style={{ border: '1px solid #e5e7eb', color: '#111827', background: '#ffffff' }}
               placeholder="Email address"
               required
             />
@@ -55,16 +55,12 @@ export default function Login() {
                 type={showPassword ? 'text' : 'password'}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 pr-10 rounded-xl text-white placeholder:text-[#495057] outline-none text-sm border border-[#3a3a3a] focus:border-[#555] transition-colors"
-                style={{ background: '#2a2a2a' }}
+                className="w-full px-4 py-3 pr-10 rounded-xl outline-none text-sm"
+                style={{ border: '1px solid #e5e7eb', color: '#111827', background: '#ffffff' }}
                 placeholder="Password"
                 required
               />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-[#495057] hover:text-[#868e96] transition-colors"
-              >
+              <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2" style={{ color: '#9ca3af' }}>
                 {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
               </button>
             </div>
@@ -72,22 +68,16 @@ export default function Login() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 rounded-xl text-white font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm"
-            style={{ background: '#4c6ef5' }}
+            className="w-full py-3 rounded-xl text-white font-medium text-sm transition-all disabled:opacity-50"
+            style={{ background: '#10a37f' }}
           >
-            {loading ? (
-              <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin mx-auto" />
-            ) : (
-              'Continue'
-            )}
+            {loading ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin mx-auto" /> : 'Continue'}
           </button>
         </form>
 
-        <p className="text-center text-[#868e96] mt-6 text-sm">
+        <p className="text-center mt-6 text-sm" style={{ color: '#6b7280' }}>
           Don't have an account?{' '}
-          <Link to="/register" className="text-[#748ffc] hover:text-[#91a7ff]">
-            Sign up
-          </Link>
+          <Link to="/register" style={{ color: '#10a37f' }}>Sign up</Link>
         </p>
       </div>
     </div>

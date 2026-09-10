@@ -4,31 +4,18 @@
 
 * {
   scrollbar-width: thin;
-  scrollbar-color: #2a2a2a #171717;
+  scrollbar-color: #d1d5db #ffffff;
 }
 
-*::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-
-*::-webkit-scrollbar-track {
-  background: #171717;
-}
-
-*::-webkit-scrollbar-thumb {
-  background-color: #2a2a2a;
-  border-radius: 3px;
-}
-
-*::-webkit-scrollbar-thumb:hover {
-  background-color: #3a3a3a;
-}
+*::-webkit-scrollbar { width: 6px; height: 6px; }
+*::-webkit-scrollbar-track { background: #ffffff; }
+*::-webkit-scrollbar-thumb { background-color: #d1d5db; border-radius: 3px; }
+*::-webkit-scrollbar-thumb:hover { background-color: #9ca3af; }
 
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  background: #212121;
-  color: #e5e7eb;
+  background: #ffffff;
+  color: #111827;
 }
 
 code, pre, .font-mono {
@@ -38,45 +25,37 @@ code, pre, .font-mono {
 @layer components {
   .btn-primary {
     @apply text-white font-medium py-2 px-4 rounded-lg transition-all duration-200 active:scale-95;
-    background: #4c6ef5;
+    background: #10a37f;
   }
-  .btn-primary:hover {
-    background: #4263eb;
-  }
+  .btn-primary:hover { background: #0d8c6d; }
   
   .btn-secondary {
-    @apply text-dark-200 font-medium py-2 px-4 rounded-lg transition-all duration-200 active:scale-95;
-    background: #2a2a2a;
-    border: 1px solid #3a3a3a;
+    @apply font-medium py-2 px-4 rounded-lg transition-all duration-200 active:scale-95;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    color: #374151;
   }
-  .btn-secondary:hover {
-    background: #333;
-  }
+  .btn-secondary:hover { background: #f7f7f8; }
   
   .btn-danger {
     @apply text-white font-medium py-2 px-4 rounded-lg transition-all duration-200 active:scale-95;
-    background: #e03131;
+    background: #dc2626;
   }
-  .btn-danger:hover {
-    background: #c92a2a;
-  }
+  .btn-danger:hover { background: #b91c1c; }
   
   .input-field {
-    @apply text-white rounded-lg px-4 py-2.5 outline-none text-sm transition-all duration-200;
-    background: #1a1a1a;
-    border: 1px solid #3a3a3a;
+    @apply rounded-lg px-4 py-2.5 outline-none text-sm transition-all duration-200;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    color: #111827;
   }
-  .input-field:focus {
-    border-color: #555;
-  }
-  .input-field::placeholder {
-    color: #495057;
-  }
+  .input-field:focus { border-color: #10a37f; }
+  .input-field::placeholder { color: #9ca3af; }
   
   .card {
     @apply rounded-xl p-6;
-    background: #2a2a2a;
-    border: 1px solid #2a2a2a;
+    border: 1px solid #e5e7eb;
+    background: #ffffff;
   }
 }
 
@@ -84,7 +63,4 @@ code, pre, .font-mono {
   from { opacity: 0; transform: translateY(4px); }
   to { opacity: 1; transform: translateY(0); }
 }
-
-.animate-fade-in {
-  animation: fadeIn 0.3s ease-out;
-}
+.animate-fade-in { animation: fadeIn 0.3s ease-out; }

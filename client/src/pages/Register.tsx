@@ -16,10 +16,7 @@ export default function Register() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (password !== confirmPassword) {
-      toast.error('Passwords do not match');
-      return;
-    }
+    if (password !== confirmPassword) { toast.error('Passwords do not match'); return; }
     setLoading(true);
     try {
       await register(email, username, password);
@@ -27,97 +24,46 @@ export default function Register() {
       navigate('/');
     } catch (error: any) {
       toast.error(error.message || 'Registration failed');
-    } finally {
-      setLoading(false);
-    }
+    } finally { setLoading(false); }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4" style={{ background: '#212121' }}>
+    <div className="min-h-screen flex items-center justify-center p-4" style={{ background: '#ffffff' }}>
       <div className="w-full max-w-sm">
-        <div className="text-center mb-10">
-          <div className="inline-flex items-center justify-center w-12 h-12 rounded-full mb-4" style={{ background: '#4c6ef5' }}>
-            <Terminal className="w-6 h-6 text-white" />
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center justify-center w-12 h-12 rounded-full mb-4" style={{ background: '#10a37f' }}>
+            <Terminal className="w-6 h-6" style={{ color: '#fff' }} />
           </div>
-          <h1 className="text-2xl font-semibold text-white">Create your account</h1>
-          <p className="text-[#868e96] mt-1 text-sm">Get started with ScriptGPT</p>
+          <h1 className="text-2xl font-semibold" style={{ color: '#111827' }}>Create your account</h1>
+          <p className="mt-1 text-sm" style={{ color: '#6b7280' }}>Get started with ScriptGPT</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl text-white placeholder:text-[#495057] outline-none text-sm border border-[#3a3a3a] focus:border-[#555] transition-colors"
-              style={{ background: '#2a2a2a' }}
-              placeholder="Email address"
-              required
-            />
+            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full px-4 py-3 rounded-xl outline-none text-sm" style={{ border: '1px solid #e5e7eb', color: '#111827', background: '#ffffff' }} placeholder="Email address" required />
           </div>
           <div>
-            <input
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl text-white placeholder:text-[#495057] outline-none text-sm border border-[#3a3a3a] focus:border-[#555] transition-colors"
-              style={{ background: '#2a2a2a' }}
-              placeholder="Username"
-              required
-            />
+            <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} className="w-full px-4 py-3 rounded-xl outline-none text-sm" style={{ border: '1px solid #e5e7eb', color: '#111827', background: '#ffffff' }} placeholder="Username" required />
           </div>
           <div>
             <div className="relative">
-              <input
-                type={showPassword ? 'text' : 'password'}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 pr-10 rounded-xl text-white placeholder:text-[#495057] outline-none text-sm border border-[#3a3a3a] focus:border-[#555] transition-colors"
-                style={{ background: '#2a2a2a' }}
-                placeholder="Password"
-                required
-                minLength={6}
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-[#495057] hover:text-[#868e96] transition-colors"
-              >
+              <input type={showPassword ? 'text' : 'password'} value={password} onChange={(e) => setPassword(e.target.value)} className="w-full px-4 py-3 pr-10 rounded-xl outline-none text-sm" style={{ border: '1px solid #e5e7eb', color: '#111827', background: '#ffffff' }} placeholder="Password" required minLength={6} />
+              <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2" style={{ color: '#9ca3af' }}>
                 {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
               </button>
             </div>
           </div>
           <div>
-            <input
-              type="password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl text-white placeholder:text-[#495057] outline-none text-sm border border-[#3a3a3a] focus:border-[#555] transition-colors"
-              style={{ background: '#2a2a2a' }}
-              placeholder="Confirm password"
-              required
-              minLength={6}
-            />
+            <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} className="w-full px-4 py-3 rounded-xl outline-none text-sm" style={{ border: '1px solid #e5e7eb', color: '#111827', background: '#ffffff' }} placeholder="Confirm password" required minLength={6} />
           </div>
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full py-3 rounded-xl text-white font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm"
-            style={{ background: '#4c6ef5' }}
-          >
-            {loading ? (
-              <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin mx-auto" />
-            ) : (
-              'Create account'
-            )}
+          <button type="submit" disabled={loading} className="w-full py-3 rounded-xl text-white font-medium text-sm transition-all disabled:opacity-50" style={{ background: '#10a37f' }}>
+            {loading ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin mx-auto" /> : 'Create account'}
           </button>
         </form>
 
-        <p className="text-center text-[#868e96] mt-6 text-sm">
+        <p className="text-center mt-6 text-sm" style={{ color: '#6b7280' }}>
           Already have an account?{' '}
-          <Link to="/login" className="text-[#748ffc] hover:text-[#91a7ff]">
-            Sign in
-          </Link>
+          <Link to="/login" style={{ color: '#10a37f' }}>Sign in</Link>
         </p>
       </div>
     </div>

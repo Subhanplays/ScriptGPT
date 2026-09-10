@@ -9,32 +9,14 @@ import Settings from './pages/Settings';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: '#212121' }}>
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-8 h-8 border-2 rounded-full animate-spin" style={{ borderColor: '#2a2a2a', borderTopColor: '#4c6ef5' }} />
-          <p className="text-sm" style={{ color: '#868e96' }}>Loading ScriptGPT...</p>
-        </div>
-      </div>
-    );
-  }
+  if (loading) return <div className="min-h-screen flex items-center justify-center" style={{ background: '#ffffff' }}><div className="flex flex-col items-center gap-4"><div className="w-8 h-8 rounded-full animate-spin" style={{ border: '2px solid #e5e7eb', borderTopColor: '#10a37f' }} /><p className="text-sm" style={{ color: '#6b7280' }}>Loading ScriptGPT...</p></div></div>;
   if (!user) return <Navigate to="/login" />;
   return <>{children}</>;
 }
 
 function AdminRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: '#212121' }}>
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-8 h-8 border-2 rounded-full animate-spin" style={{ borderColor: '#2a2a2a', borderTopColor: '#4c6ef5' }} />
-          <p className="text-sm" style={{ color: '#868e96' }}>Loading ScriptGPT...</p>
-        </div>
-      </div>
-    );
-  }
+  if (loading) return <div className="min-h-screen flex items-center justify-center" style={{ background: '#ffffff' }}><div className="flex flex-col items-center gap-4"><div className="w-8 h-8 rounded-full animate-spin" style={{ border: '2px solid #e5e7eb', borderTopColor: '#10a37f' }} /><p className="text-sm" style={{ color: '#6b7280' }}>Loading ScriptGPT...</p></div></div>;
   if (!user) return <Navigate to="/login" />;
   if (user.role !== 'ADMIN') return <Navigate to="/" />;
   return <>{children}</>;
@@ -42,17 +24,7 @@ function AdminRoute({ children }: { children: React.ReactNode }) {
 
 function AppRoutes() {
   const { user, loading } = useAuth();
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: '#212121' }}>
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-8 h-8 border-2 rounded-full animate-spin" style={{ borderColor: '#2a2a2a', borderTopColor: '#4c6ef5' }} />
-          <p className="text-sm" style={{ color: '#868e96' }}>Loading ScriptGPT...</p>
-        </div>
-      </div>
-    );
-  }
+  if (loading) return <div className="min-h-screen flex items-center justify-center" style={{ background: '#ffffff' }}><div className="flex flex-col items-center gap-4"><div className="w-8 h-8 rounded-full animate-spin" style={{ border: '2px solid #e5e7eb', borderTopColor: '#10a37f' }} /><p className="text-sm" style={{ color: '#6b7280' }}>Loading ScriptGPT...</p></div></div>;
 
   return (
     <Routes>
@@ -77,19 +49,9 @@ export default function App() {
           position="top-right"
           toastOptions={{
             duration: 3000,
-            style: {
-              background: '#2a2a2a',
-              color: '#e5e7eb',
-              border: '1px solid #3a3a3a',
-              borderRadius: '12px',
-              fontSize: '14px',
-            },
-            success: {
-              iconTheme: { primary: '#4c6ef5', secondary: '#e5e7eb' },
-            },
-            error: {
-              iconTheme: { primary: '#ff6b6b', secondary: '#e5e7eb' },
-            },
+            style: { background: '#ffffff', color: '#111827', border: '1px solid #e5e7eb', borderRadius: '12px', fontSize: '14px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' },
+            success: { iconTheme: { primary: '#10a37f', secondary: '#ffffff' } },
+            error: { iconTheme: { primary: '#dc2626', secondary: '#ffffff' } },
           }}
         />
       </Router>
