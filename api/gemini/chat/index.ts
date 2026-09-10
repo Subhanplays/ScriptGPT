@@ -4,36 +4,23 @@ import jwt from 'jsonwebtoken';
 import { prisma } from '../../db';
 import { SCRIPTGPT_SYSTEM_PROMPT } from '../../src/utils/scriptgpt-prompt';
 
-function verifyToken(req: VercelRequest): string | null {
-  const token = req.headers.authorization?.replace('Bearer ', '');
-  if (!token) return null;
-  try { return (jwt.verify(token, process.env.JWT_SECRET!) as { userId: string }).userId; } catch { return null; }
+function verify(req: VercelRequest): string | null {
+  const t = req.headers.authorization?.replace('Bearer ', '');
+  if (!t) return null;
+  try { return (jwt.verify(t, process.env.JWT_SECRET!) as { userId: string }).userId; } catch { return null; }
 }
 
 export const config = { api: { bodyParser: false } };
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Access-Control-Allow-Origin', process.env.CORS_ORIGIN || '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST,GET,OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'POST,OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization');
   if (req.method === 'OPTIONS') return res.status(200).end();
+  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const userId = verifyToken(req);
+  const userId = verify(req);
   if (!userId) return res.status(401).json({ error: 'Authentication required' });
-
-  const slug = (req.query.slug as string[]) || [];
-  const sub = slug[0] || '';
-
-  if (req.method === 'GET' && sub === 'models') {
-    return res.json([
-      { id: 'gemini-2.0-flash', name: 'Gemini 2.0 Flash', description: 'Fast and efficient' },
-      { id: 'gemini-2.0-flash-lite', name: 'Gemini 2.0 Flash Lite', description: 'Lightweight and fast' },
-      { id: 'gemini-1.5-flash', name: 'Gemini 1.5 Flash', description: 'Balanced performance' },
-      { id: 'gemini-1.5-pro', name: 'Gemini 1.5 Pro', description: 'Most capable' },
-    ]);
-  }
-
-  if (req.method !== 'POST' || sub !== 'chat') return res.status(404).json({ error: 'Not found' });
 
   let body: any;
   try {
