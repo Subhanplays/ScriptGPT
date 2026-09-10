@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken';
 import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
-const SYSTEM_PROMPT = `You are ScriptGPT, an AI assistant exclusively dedicated to creating, modifying, and explaining Bash/Shell scripts. Your tagline is: "Tell me what you want your shell script to do, and ScriptGPT creates it." You can create, modify, fix, improve, explain .sh scripts and generate ideas. You MUST refuse general questions, essays, code in other languages, homework, entertainment, math, or product recommendations. When creating scripts, ALWAYS include the complete .sh code in a bash code block, a brief explanation, usage instructions, required dependencies, and safety warnings. Always use #!/bin/bash, proper quoting, error handling, comments, meaningful names, and set -euo pipefail when appropriate.`;
+const SYSTEM_PROMPT = `You are ScriptGPT, a helpful AI assistant. You specialize in Bash/Shell scripting, Linux, system administration, DevOps, and command-line operations, but you can help with any question. Be helpful, concise, and practical.`;
 
 function verify(req: VercelRequest): string | null {
   const t = req.headers.authorization?.replace('Bearer ', '');
@@ -50,23 +50,43 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   await prisma.message.create({ data: { conversationId: conversation.id, role: 'user', content: message, aiProvider: 'GEMINI' } });
   const messages = await prisma.message.findMany({ where: { conversationId: conversation.id }, orderBy: { createdAt: 'asc' } });
 
-  const genAI = new GoogleGenerativeAI(user.geminiApiKey);
-  const model = genAI.getGenerativeModel({ model: user.geminiModel || 'gemini-2.0-flash', systemInstruction: SYSTEM_PROMPT });
-  const chat = model.startChat({ history: messages.slice(0, -1).map(m => ({ role: m.role === 'assistant' ? 'model' : 'user', parts: [{ text: m.content }] })) });
-
   res.setHeader('Content-Type', 'text/event-stream');
   res.setHeader('Cache-Control', 'no-cache');
   res.setHeader('Connection', 'keep-alive');
 
   try {
+    const genAI = new GoogleGenerativeAI(user.geminiApiKey);
+    const model = genAI.getGenerativeModel({ model: user.geminiModel || 'gemini-2.0-flash', systemInstruction: SYSTEM_PROMPT });
+
+    const history = messages.slice(0, -1).map(m => ({
+      role: m.role === 'assistant' ? 'model' : 'user',
+      parts: [{ text: m.content }]
+    })).filter(m => m.parts[0].text.trim() !== '');
+
+    const chat = model.startChat({ history });
     const result = await chat.sendMessageStream(message);
     let fullText = '';
-    for await (const chunk of result.stream) { fullText += chunk.text(); res.write(`data: ${JSON.stringify({ text: chunk.text(), done: false })}\n\n`); }
+
+    for await (const chunk of result.stream) {
+      const text = chunk.text();
+      if (text) {
+        fullText += text;
+        res.write(`data: ${JSON.stringify({ text, done: false })}\n\n`);
+      }
+    }
+
     res.write(`data: ${JSON.stringify({ text: '', done: true, conversationId: conversation.id })}\n\n`);
     res.end();
-    await prisma.message.create({ data: { conversationId: conversation.id, role: 'assistant', content: fullText, aiProvider: 'GEMINI', model: user.geminiModel || 'gemini-2.0-flash' } });
-    await prisma.conversation.update({ where: { id: conversation.id }, data: { updatedAt: new Date() } });
+
+    if (fullText) {
+      await prisma.message.create({ data: { conversationId: conversation.id, role: 'assistant', content: fullText, aiProvider: 'GEMINI', model: user.geminiModel || 'gemini-2.0-flash' } });
+      await prisma.conversation.update({ where: { id: conversation.id }, data: { updatedAt: new Date() } });
+    }
   } catch (error: any) {
-    if (!res.writableEnded) { res.write(`data: ${JSON.stringify({ error: error.message, done: true })}\n\n`); res.end(); }
+    console.error('Gemini chat error:', error.message);
+    if (!res.writableEnded) {
+      res.write(`data: ${JSON.stringify({ error: error.message || 'Failed to get response', done: true })}\n\n`);
+      res.end();
+    }
   }
 }
