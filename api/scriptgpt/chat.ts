@@ -96,8 +96,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (!message) return res.status(400).json({ error: 'Message is required' });
   if (!isShellRelated(message)) return res.status(400).json({ error: 'ScriptGPT is specialized in Bash/Shell scripting and Linux administration. Please ask something related to shell commands, scripts, or Linux system administration.' });
 
-  const adminKey = process.env.ADMIN_GEMINI_KEY;
-  if (!adminKey) return res.status(500).json({ error: 'ScriptGPT AI not configured' });
+  let adminKey = process.env.ADMIN_GEMINI_KEY;
+  if (!adminKey) {
+    const setting = await prisma.systemSetting.findUnique({ where: { key: 'ADMIN_GEMINI_KEY' } });
+    adminKey = setting?.value;
+  }
+  if (!adminKey) return res.status(500).json({ error: 'ScriptGPT AI not configured. Please ask the admin to set the Gemini API key.' });
 
   let conversation;
   if (conversationId) {

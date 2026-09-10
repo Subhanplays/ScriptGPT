@@ -1,6 +1,8 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import jwt from 'jsonwebtoken';
+import { PrismaClient } from '@prisma/client';
+const prisma = new PrismaClient();
 
 const SYSTEM_PROMPT = `You are ScriptGPT, an AI assistant exclusively dedicated to creating, modifying, and explaining Bash/Shell scripts.`;
 const IDEAS_PROMPT = `Generate a list of 5-10 useful Bash script ideas. For each idea, provide: 1. A catchy title 2. A one-sentence description 3. Difficulty level (beginner/intermediate/advanced) 4. One use case. Focus on practical scripts for sysadmins, DevOps, and developers. Include automation, maintenance, backup, monitoring, and productivity scripts. Format as a numbered list.`;
@@ -23,8 +25,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const userId = verify(req);
   if (!userId) return res.status(401).json({ error: 'Authentication required' });
 
-  const adminKey = process.env.ADMIN_GEMINI_KEY;
-  if (!adminKey) return res.status(500).json({ error: 'ScriptGPT AI not configured' });
+  let adminKey = process.env.ADMIN_GEMINI_KEY;
+  if (!adminKey) {
+    const setting = await prisma.systemSetting.findUnique({ where: { key: 'ADMIN_GEMINI_KEY' } });
+    adminKey = setting?.value;
+  }
+  if (!adminKey) return res.status(500).json({ error: 'ScriptGPT AI not configured. Please ask the admin to set the Gemini API key.' });
 
   res.setHeader('Content-Type', 'text/event-stream');
   res.setHeader('Cache-Control', 'no-cache');
